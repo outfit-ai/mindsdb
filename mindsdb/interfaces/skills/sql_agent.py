@@ -10,7 +10,8 @@ from mindsdb_sql.planner.utils import query_traversal
 
 from mindsdb.utilities import log
 from mindsdb.utilities.context import context as ctx
-
+from mindsdb.utilities.native_query_transformer import transform_query
+from mindsdb.utilities.json_detector import has_json
 logger = log.getLogger(__name__)
 
 
@@ -200,6 +201,8 @@ class SQLAgent:
     def _clean_query(self, query: str) -> str:
         # Sometimes LLM can input markdown into query tools.
         cmd = re.sub(r'```(sql)?', '', query)
+        if has_json(cmd):
+            cmd = transform_query(cmd)
         return cmd
 
     def query(self, command: str, fetch: str = "all") -> str:
