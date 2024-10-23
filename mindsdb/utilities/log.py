@@ -37,16 +37,29 @@ def configure_logging():
 
     logging_config = dict(
         version=1,
-        formatters={"f": {"()": ColorFormatter}},
+        formatters={
+            "f": {"()": ColorFormatter},
+            "simple": {
+                "format": "%(asctime)s %(processName)15s %(levelname)-8s %(name)s: %(message)s"
+            },
+        },
         handlers={
             "console": {
                 "class": "logging.StreamHandler",
                 "formatter": "f",
-            }
+            },
+            "rotating_file_handler": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "level": "DEBUG",
+                "formatter": "f",
+                "filename": "mindsdb_app.log",
+                "maxBytes": 5048576,
+                "backupCount": 10,
+            },
         },
         loggers={
             "": {  # root logger
-                "handlers": ["console"],
+                "handlers": ["console", "rotating_file_handler"],
                 "level": logging.WARNING,
             },
             "__main__": {
