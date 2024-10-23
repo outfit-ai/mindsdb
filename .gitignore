@@ -58,3 +58,4 @@ xgboost
 # Docs
 node_modules
 backup_data/
+mindsdb_app.log*
