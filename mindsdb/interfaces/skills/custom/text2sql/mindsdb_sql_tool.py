@@ -5,7 +5,7 @@ from langchain.tools import BaseTool
 from mindsdb_sql import parse_sql
 from pydantic import BaseModel, Field
 from mindsdb.utilities.native_query_transformer import transform_query
-from mindsdb.utilities.json_detector import has_json
+from mindsdb.utilities.json_detector import needs_native_query
 
 class _MindsDBSQLParserToolInput(BaseModel):
     tool_input: str = Field("", description="A SQL query to validate.")
@@ -29,7 +29,7 @@ class MindsDBSQLParserTool(BaseTool):
     def _run(self, query: str):
         """Validate the SQL query."""
         clean_query = self._clean_query(query)
-        if has_json(clean_query):
+        if needs_native_query(clean_query):
             clean_query = transform_query(clean_query)
         for query in self._query_options(clean_query):
             try:
